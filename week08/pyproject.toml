@@ -1,0 +1,42 @@
+[project]
+name = "week08"
+version = "0.1.0"
+description = "Week 08 教学示例：LLM 服务化、LangGraph、K8s、监控与多模态实践"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "requests",
+    "httpx",
+    "pydantic",
+    "python-dotenv",
+    "langgraph",
+    "langchain-community",
+    "langchain-core",
+    "tenacity",
+    "dashscope",
+]
+
+[project.optional-dependencies]
+webllm = [
+    "gradio",
+    "pandas",
+    "celery",
+    "redis",
+    "flower",
+    "psycopg2-binary",
+    "sqlalchemy",
+]
+ray = [
+    "ray[serve]",
+]
+multimodal = [
+    "modelscope",
+    "transformers",
+    "torch",
+    "pillow",
+]
+monitoring = [
+    "prometheus-client",
+]

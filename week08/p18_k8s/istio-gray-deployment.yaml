@@ -1,0 +1,86 @@
+# VirtualService - 流量路由规则
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: langchain-vs
+spec:
+  hosts:
+  - langchain-service
+  http:
+  - match:
+    - headers:
+        canary:
+          exact: "true"
+    route:
+    - destination:
+        host: langchain-service
+        subset: canary
+  - route:
+    - destination:
+        host: langchain-service
+        subset: stable
+      weight: 90  # 90% 流量到稳定版本
+    - destination:
+        host: langchain-service
+        subset: canary
+      weight: 10  # 10% 流量到金丝雀版本
+
+---
+# DestinationRule - 定义服务子集
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: langchain-dr
+spec:
+  host: langchain-service
+  subsets:
+  - name: stable
+    labels:
+      version: stable
+  - name: canary
+    labels:
+      version: canary
+
+---
+# Gateway - 入口网关
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: langchain-gateway
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+
+---
+# VirtualService for Gateway
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: langchain-gateway-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - langchain-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /langchain
+    rewrite:
+      uri: /
+    route:
+    - destination:
+        host: langchain-service
+        subset: stable
+      weight: 90
+    - destination:
+        host: langchain-service
+        subset: canary
+      weight: 10

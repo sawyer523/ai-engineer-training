@@ -1,0 +1,122 @@
+# Minikube 安装和配置指南
+
+## 1. 安装 Minikube
+
+# 创建 minikube 目录
+New-Item -Path 'c:\' -Name 'minikube' -ItemType Directory -Force
+
+# 下载 minikube 可执行文件
+$ProgressPreference = 'SilentlyContinue'; Invoke-WebRequest -OutFile 'c:\minikube\minikube.exe' -Uri 'https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe' -UseBasicParsing
+
+# 将 minikube 添加到系统环境变量 PATH 中
+$oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)
+if ($oldPath.Split(';') -inotcontains 'C:\minikube'){
+  [Environment]::SetEnvironmentVariable('Path', $('{0};C:\minikube' -f $oldPath), [EnvironmentVariableTarget]::Machine)
+}
+
+## 2. 启动 Minikube 集群
+
+# 停止现有的 minikube 集群（如果有）
+C:\minikube\minikube.exe stop
+
+# 启动 minikube 集群，使用阿里云镜像加速
+C:\minikube\minikube.exe start  --registry-mirror=https://qra1mkpv.mirror.aliyuncs.com   --insecure-registry="0.0.0.0/0"
+
+# 查看所有命名空间中的 Pod 状态
+.\minikube.exe kubectl -- get po -A
+
+# 启动 Kubernetes 仪表板
+.\minikube.exe dashboard
+
+## 3. 构建和部署应用
+
+# 切换到 Minikube 的 Docker 环境
+C:\minikube\minikube.exe docker-env | Invoke-Expression
+
+# 切换到项目目录
+cd D:\AI工程化训练营\workspace\week08\p18_k8s\
+
+# 构建 Docker 镜像
+docker build -t langchain-service:v1 .
+
+## 4. 部署 Kubernetes 资源
+
+# 应用密钥配置
+C:\minikube\minikube.exe kubectl -- apply -f D:\AI工程化训练营\workspace\week08\p18_k8s\secret.yaml
+
+# 部署应用
+C:\minikube\minikube.exe kubectl -- apply -f D:\AI工程化训练营\workspace\week08\p18_k8s\deployment.yaml
+
+# 创建服务
+C:\minikube\minikube.exe kubectl -- apply -f D:\AI工程化训练营\workspace\week08\p18_k8s\service.yaml 
+
+## 5. 检查部署状态
+
+# 查看 Pod 状态
+kubectl get pods
+
+# 查看服务状态
+kubectl get svc
+
+## 6. 获取服务访问地址
+
+# 获取服务的外部访问 URL（如果使用 Minikube）
+minikube.exe service langchain-service --url 
+
+## 常见问题解决：
+
+如果Pod无法启动：
+1. kubectl describe pod <pod-name>查看详细错误信息
+2. kubectl logs <pod-name>检查日志输出
+
+## 7. API 测试
+
+一旦服务运行，你可以通过以下方式测试：
+
+# 使用服务 URL 测试 API（替换为实际的服务地址）
+curl "<service-url>/ask?question=如何优化Docker镜像大小" 
+
+# 使用具体 IP 和端口测试 API
+curl "http://172.19.32.57:32144/ask?question=如何优化Docker镜像大小" 
+
+## 8. 扩展建议
+
+### Horizontal Pod Autoscaler (HPA)
+当负载增加时自动扩展Pod数量:
+
+# 应用 HPA 配置
+kubectl apply -f hpa.yaml 
+
+### 查看 HPA 状态
+
+# 启用 metrics-server 插件
+minikube addons enable metrics-server 
+
+# 查看 HPA 状态
+kubectl get hpa 
+
+# 应用 metrics-server 配置
+kubectl.exe apply -f .\metrics-server.yaml
+
+### Ingress 配置
+如果你有多个服务需要外部访问:
+
+# 应用 Ingress 配置
+kubectl apply -f ingress.yaml 
+
+# 查看 Ingress 状态
+kubectl get ingress
+
+# 查看 Ingress 详细信息
+kubectl describe ingress langchain-ingress
+
+## 9. 不同的访问方式
+
+# 直接通过 NodePort 访问（原来的方式）
+curl "http://172.19.32.57:32144/ask?question=如何优化Docker镜像大小"
+
+# 通过 Ingress 访问（新方式）
+curl "http://localhost:32140/langchain/ask?question=如何优化Docker镜像大小"
+
+# 通过端口转发访问（需要等待镜像，用以下命令模拟 kubectl port-forward svc/langchain-service 8080:80）
+curl "http://localhost:8080/ask?question=如何优化Docker镜像大小"

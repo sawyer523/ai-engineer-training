@@ -1,0 +1,156 @@
+version: '3.8'
+
+services:
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: webllm_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+        labels: "service=redis"
+    
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # PostgreSQL数据库服务
+  postgres:
+    image: postgres:15-alpine
+    container_name: webllm_postgres
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-webllm_db}
+      POSTGRES_USER: ${DATABASE_USER:-webllm_user}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-webllm_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+        labels: "service=postgres"
+    
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER:-webllm_user} -d ${DATABASE_NAME:-webllm_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 主应用服务（包含FastAPI和Gradio）
+  app:
+    build: .
+    container_name: webllm_app
+    ports:
+      - "8000:8000"
+      - "7860:7860"
+    environment:
+      # 服务器配置
+      - HOST=0.0.0.0
+      - PORT=8000
+      - GRADIO_HOST=0.0.0.0
+      - GRADIO_PORT=7860
+      
+      # LLM配置
+      - LLM_MODEL=${LLM_MODEL:-qwen-turbo}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      
+      # API限制配置
+      - MAX_INPUT_LENGTH=${MAX_INPUT_LENGTH:-500}
+      - MIN_INPUT_LENGTH=${MIN_INPUT_LENGTH:-1}
+      
+      # 重试配置
+      - RETRY_MULTIPLIER=${RETRY_MULTIPLIER:-1}
+      - RETRY_MIN_WAIT=${RETRY_MIN_WAIT:-2}
+      - RETRY_MAX_WAIT=${RETRY_MAX_WAIT:-10}
+      - RETRY_MAX_ATTEMPTS=${RETRY_MAX_ATTEMPTS:-3}
+      
+      # 日志配置
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - CELERY_LOG_LEVEL=${CELERY_LOG_LEVEL:-INFO}
+      - CELERY_TASK_SERIALIZER=json
+      - CELERY_RESULT_SERIALIZER=json
+      - CELERY_ACCEPT_CONTENT=json
+      - CELERY_TIMEZONE=Asia/Shanghai
+      - CELERY_ENABLE_UTC=true
+      - CELERY_TASK_TRACK_STARTED=true
+      - CELERY_TASK_TIME_LIMIT=300
+      - CELERY_TASK_SOFT_TIME_LIMIT=240
+      - CELERY_WORKER_PREFETCH_MULTIPLIER=1
+      - CELERY_WORKER_MAX_TASKS_PER_CHILD=1000
+      
+      # 数据库配置
+      - DB_TYPE=postgresql
+      - DATABASE_URL=postgresql://${DATABASE_USER:-webllm_user}:${DATABASE_PASSWORD:-webllm_password}@postgres:5432/${DATABASE_NAME:-webllm_db}
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=${DATABASE_NAME:-webllm_db}
+      - DATABASE_USER=${DATABASE_USER:-webllm_user}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-webllm_password}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DATABASE_NAME:-webllm_db}
+      - DB_USER=${DATABASE_USER:-webllm_user}
+      - DB_PASSWORD=${DATABASE_PASSWORD:-webllm_password}
+      
+      # Redis配置（保留以备将来使用）
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    
+    volumes:
+      - .:/app
+    
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    
+    restart: unless-stopped
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service=webllm_app"
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: webllm_network

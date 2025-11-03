@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  langgraph-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # 从.env文件读取所有环境变量
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - LLM_MODEL=${LLM_MODEL}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - MAX_INPUT_LENGTH=${MAX_INPUT_LENGTH}
+      - MIN_INPUT_LENGTH=${MIN_INPUT_LENGTH}
+      - RETRY_MULTIPLIER=${RETRY_MULTIPLIER}
+      - RETRY_MIN_WAIT=${RETRY_MIN_WAIT}
+      - RETRY_MAX_WAIT=${RETRY_MAX_WAIT}
+      - RETRY_MAX_ATTEMPTS=${RETRY_MAX_ATTEMPTS}
+      - LOG_LEVEL=${LOG_LEVEL}
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

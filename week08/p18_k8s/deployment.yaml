@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langchain-deployment
+spec:
+  replicas: 3  # 在开发环境中先使用3个副本
+  selector:
+    matchLabels:
+      app: langchain-app
+  template:
+    metadata:
+      labels:
+        app: langchain-app
+    spec:
+      containers:
+      - name: langchain-container
+        image: langchain-service:v3
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DASHSCOPE_API_KEY   # 从Secret获取API密钥更安全！
+          valueFrom:
+            secretKeyRef:
+              name: langchain-secrets
+              key: dashscope-api-key  
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

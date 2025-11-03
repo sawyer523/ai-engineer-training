@@ -1,0 +1,78 @@
+# 稳定版本 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langchain-stable
+  labels:
+    version: stable
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: langchain-app
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: langchain-app
+        version: stable
+    spec:
+      containers:
+      - name: langchain-container
+        image: langchain-service:v3  # 稳定版本
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DASHSCOPE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: langchain-secrets
+              key: dashscope-api-key
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+---
+# 金丝雀版本 Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langchain-canary
+  labels:
+    version: canary
+spec:
+  replicas: 1  # 金丝雀版本只部署1个副本
+  selector:
+    matchLabels:
+      app: langchain-app
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: langchain-app
+        version: canary
+    spec:
+      containers:
+      - name: langchain-container
+        image: langchain-service:v4  # 新版本
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DASHSCOPE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: langchain-secrets
+              key: dashscope-api-key
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

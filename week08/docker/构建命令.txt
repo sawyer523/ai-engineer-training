@@ -1,0 +1,16 @@
+# 方法一
+
+# 单独使用Docker
+docker build -t langgraph-api .
+# 安全方式：通过-e参数传递敏感环境变量，并指定容器名称
+docker run --name langgraph-api -p 8000:8000 -e DASHSCOPE_API_KEY=sk-0bba2e6bdc48470390f8f0b4be43e4a7 langgraph-api
+
+# 或者从.env文件加载环境变量，并指定容器名称
+# docker run --name langgraph-api -p 8000:8000 --env-file .env langgraph-api
+
+
+# 方法二
+
+# 构建并启动服务
+docker-compose up --build
+
