@@ -1,0 +1,1 @@
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"order_lookup","arguments":{"text":"查询订单#20251114001"}}}

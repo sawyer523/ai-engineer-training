@@ -1,25 +1,25 @@
 {
-  "timestamp": "2025-11-16T00:43:48.483829",
+  "timestamp": "2025-11-19T22:05:40.211523",
   "summary": {
     "thresholds": {
-      "faithfulness": 0.7,
-      "answer_relevancy": 0.6
+      "faithfulness": 0.69,
+      "answer_relevancy": 0.59
     },
-    "pass": 1,
-    "fail": 2,
+    "pass": 2,
+    "fail": 1,
     "total": 3,
-    "avg_faithfulness": 0.8333333333333334,
-    "avg_answer_relevancy": 0.703976249956905,
+    "avg_faithfulness": 0.8095238095238094,
+    "avg_answer_relevancy": 0.7060854448797308,
     "avg_precision_at_k": 1.0,
     "avg_recall_at_k": 1.0,
-    "elapsed_sec": 112.77
+    "elapsed_sec": 120.823
   },
   "cases": [
     {
       "case": "课程相关",
       "query": "AI会不会替代程序员？",
       "route": "direct",
-      "answer_preview": "AI可能会辅助程序员，提高效率，但短期内难以完全替代程序员。程序员需要的创造性、逻辑思维和问题解决能力仍是AI难以取代的核心技能。",
+      "answer_preview": "AI可能会辅助程序员，提高效率，但短期内不会完全替代程序员。程序员需要的创造力、逻辑思维和问题解决能力仍是AI难以取代的。",
       "contexts_count": 2,
       "faiss_results": {
         "query": [
@@ -80,8 +80,8 @@
         ]
       },
       "evaluation_metrics": {
-        "faithfulness": 0.5,
-        "answer_relevancy": 0.7750516647997546,
+        "faithfulness": 0.42857142857142855,
+        "answer_relevancy": 0.7741839573455856,
         "precision_at_k": 1.0,
         "recall_at_k": 1.0
       },
@@ -92,7 +92,7 @@
       "case": "售前咨询",
       "query": "售前咨询：课程适合新人吗？",
       "route": "course",
-      "answer_preview": "根据参考资料的内容，课程不适合零基础的新人。课程面向有编程经验的开发者和架构师，建议学员已掌握Python及基本Web开发能力。",
+      "answer_preview": "根据提供的资料，课程不适合零基础学员参加，建议有编程经验的开发者和架构师报名。",
       "contexts_count": 2,
       "faiss_results": {
         "query": [
@@ -154,12 +154,12 @@
       },
       "evaluation_metrics": {
         "faithfulness": 1.0,
-        "answer_relevancy": 0.5933153918984885,
+        "answer_relevancy": 0.6005106841211348,
         "precision_at_k": 1.0,
         "recall_at_k": 1.0
       },
-      "problem_description": "回答相关性不足，未充分贴合用户问题",
-      "passed": false
+      "problem_description": "无明显问题",
+      "passed": true
     },
     {
       "case": "售后服务",

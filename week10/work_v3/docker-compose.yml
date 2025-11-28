@@ -1,0 +1,60 @@
+# 使用 Compose 最新规范（不写 version 字段），为 work 目录提供容器编排
+# 目标：持久化日志、数据库、备份；通过 .env 管理敏感配置；健康检查、依赖与重启策略
+
+name: work-stack
+
+services:
+  app:
+    image: python:3.11-slim
+    working_dir: /app
+    # Compose 会自动加载同目录下的 .env 文件；下方通过 ${VAR} 引用
+    environment:
+      - MODEL_NAME=${MODEL_NAME:-qwen-turbo}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-v4}
+      - KB_INDEX_DIR=${KB_INDEX_DIR:-/app/faiss_index}
+      - ORDERS_DB_PATH=${ORDERS_DB_PATH:-/app/db/orders.sqlite}
+      - CHECKPOINT_DB_PATH=${CHECKPOINT_DB_PATH:-}
+      - SUPPORT_DB_PATH=${SUPPORT_DB_PATH:-/app/support.db}
+      - HUMAN_SUPPORT_URL=${HUMAN_SUPPORT_URL:-}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:-}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+    # 容器启动前安装依赖，然后启动 FastAPI（端口 8000）
+    command: >-
+      sh -c "pip install --no-cache-dir -r /requirements.txt uvicorn[standard]
+      && uvicorn app:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    # 数据持久化：将日志、数据库与备份目录绑定到宿主机指定路径
+    volumes:
+      # 代码目录（work）映射到容器 /app，确保运行本地代码
+      - .:/app
+      # requirements.txt 映射以安装依赖
+      - ../requirements.txt:/requirements.txt:ro
+      # 日志持久化到 ./logs
+      - ./logs:/app/logs
+      # SQLite 数据库持久化到 ./data/db
+      - ./data/db:/app/db
+      # 备份文件持久化到 ./backups
+      - ./backups:/app/backup
+    depends_on:
+      redis:
+        condition: service_healthy
+    # 健康检查：访问应用的 /health 接口，返回 200 视为健康
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"from urllib.request import urlopen; import sys; sys.exit(0) if urlopen('http://localhost:8000/health').getcode()==200 else sys.exit(1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  # 可选 Redis，用于会话与缓存。应用会自动回退，无 Redis 也能运行。
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped

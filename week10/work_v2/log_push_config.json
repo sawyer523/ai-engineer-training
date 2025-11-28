@@ -1,0 +1,30 @@
+{
+  "input_file": "work/logs/requests.log",
+  "state_file": "work/state/log_push_state.json",
+  "logstash_http_url": "http://localhost:8080",
+  "auth": {
+    "type": "none",
+    "username": "",
+    "password": "",
+    "bearer_token": ""
+  },
+  "batch_size": 200,
+  "batch_flush_ms": 1500,
+  "max_retries": 5,
+  "retry_backoff_ms": 500,
+  "threads": 2,
+  "content_type": "ndjson",
+  "field_map": {
+    "timestamp": "@timestamp",
+    "level": "level",
+    "logger": "logger",
+    "route": "route",
+    "cost_ms": "latency_ms",
+    "request_query": "request.query"
+  },
+  "metadata": {
+    "source": "requests.log"
+  },
+  "interval_sec": 2,
+  "from_start": false
+}

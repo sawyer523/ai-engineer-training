@@ -6,11 +6,10 @@ from langchain.tools import tool
 import asyncio
 import logging
 import dotenv
-
+import os
 
 # 设置日志级别为DEBUG
 logging.basicConfig(level=logging.INFO)
-
 
 # 加载环境变量
 dotenv.load_dotenv()
