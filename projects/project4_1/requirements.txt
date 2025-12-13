@@ -1,0 +1,11 @@
+langgraph
+langchain
+langchain-community
+langchain-openai
+dashscope
+langchain-chroma
+pydantic
+httpx
+sqlalchemy
+openai
+langgraph-checkpoint-sqlite

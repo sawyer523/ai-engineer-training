@@ -1,0 +1,19 @@
+设计一个支持多轮对话的订单查询客服流程
+输入输出定义：
+输入：用户自然语言（如“我要查订单”、“订单号是 1234567890”）
+输出：订单状态、物流信息、退款建议等
+扩展项：
+支持语音输入（ASR）
+支持图像上传（OCR 提取订单号）
+支持对话记录持久化（sqlite）
+
+
+
+多轮对话
+https://langgraph.com.cn/agents/memory/index.html
+
+SQL
+https://langgraph.com.cn/tutorials/sql-agent/index.html
+
+RAG
+https://langgraph.com.cn/tutorials/rag/langgraph_agentic_rag/index.html
