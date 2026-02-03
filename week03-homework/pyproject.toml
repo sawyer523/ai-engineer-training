@@ -1,10 +1,25 @@
 [project]
 name = "week03-homework"
 version = "0.1.0"
-description = "Add your description here"
+description = "LlamaIndex Sentence Window Retrieval and OCR Image Loader"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-	"python-dotenv",
-	# add your dependencies here and run `uv sync` to install them
+    "python-dotenv",
+    # LlamaIndex core and dependencies
+    "llama-index-core>=0.10.0",
+    "llama-index-llms-openai>=0.1.0",
+    "llama-index-llms-openai-like>=0.1.0",
+    "llama-index-embeddings-openai>=0.1.0",
+    "llama-index-readers-file>=0.1.0",
+    # OpenAI SDK
+    "openai>=1.0.0",
+    # OCR dependencies
+    "paddleocr",
+    "paddlepaddle",
+    "pillow",
+    "numpy",
 ]
+
+[tool.uv]
+dev-dependencies = []

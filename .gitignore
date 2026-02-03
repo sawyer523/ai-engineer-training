@@ -216,3 +216,5 @@ __marimo__/
 
 week02/requirements.txt
 week02/uv.lock
+
+.idea

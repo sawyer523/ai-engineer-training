@@ -1,7 +1,7 @@
 # 1 模型 I/O 模块
-from langchain.llms import openai
-from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage
+from langchain_classic.llms import openai
+from langchain_classic.chat_models import ChatOpenAI
+from langchain_classic.schema import HumanMessage
 
 chat = ChatOpenAI(model='gpt-5')
 response = chat([HumanMessage(content="你好")])
