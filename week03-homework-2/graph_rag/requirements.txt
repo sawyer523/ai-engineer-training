@@ -1,0 +1,21 @@
+# GraphRAG 多跳问答系统依赖 (Python 3.12+ compatible)
+fastapi==0.117.1
+uvicorn[standard]==0.37.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+
+# LlamaIndex 核心
+llama-index==0.14.3
+llama-index-graph-stores-neo4j==0.5.1
+llama-index-llms-openai>=0.2.0
+llama-index-embeddings-openai>=0.2.0
+
+# Neo4j 客户端
+neo4j==5.28.2
+
+# 文档处理
+python-dotenv==1.1.1
+aiofiles>=23.2.1
+
+# 数据处理
+pandas>=2.2.3
