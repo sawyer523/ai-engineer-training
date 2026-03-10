@@ -1,10 +1,20 @@
 [project]
 name = "week05-homework"
 version = "0.1.0"
-description = "Add your description here"
+description = "基于MCP协议的多代理文章自动编写系统"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+	"dashscope>=1.24.6",
+	"duckduckgo-search>=8.1.1",
+	"fastmcp[cli]>=2.12.3",
+	"langchain>=0.3.27",
+	"langchain-community>=0.3.29",
+	"langchain-mcp-adapters>=0.1.10",
+	"langgraph>=0.6.7",
 	"python-dotenv",
-	# add your dependencies here and run `uv sync` to install them
 ]
+
+[[tool.uv.index]]
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+default = true
