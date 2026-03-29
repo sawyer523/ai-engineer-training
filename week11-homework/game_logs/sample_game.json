@@ -1,0 +1,150 @@
+{
+  "game_time": "2026-03-27T10:30:00",
+  "players": [
+    {"id": 1, "name": "张三", "role": "villager", "personality": "observant"},
+    {"id": 2, "name": "李四", "role": "villager", "personality": "cautious"},
+    {"id": 3, "name": "王五", "role": "villager", "personality": "aggressive"},
+    {"id": 4, "name": "赵六", "role": "werewolf", "personality": "charismatic"},
+    {"id": 5, "name": "钱七", "role": "werewolf", "personality": "suspicious"}
+  ],
+  "events": [
+    {
+      "timestamp": "2026-03-27T10:30:05",
+      "phase": "setup",
+      "event": "game_start",
+      "description": "游戏开始！共有 5 名玩家参与游戏。"
+    },
+    {
+      "timestamp": "2026-03-27T10:30:10",
+      "phase": "night",
+      "event": "night_discussion",
+      "description": "🌙 第 1 夜 - 天黑请闭眼",
+      "werewolf_discussion": [
+        {"speaker": 4, "content": "我认为我们应该先干掉那个观察型的张三，他可能比较危险。"},
+        {"speaker": 5, "content": "同意，王五看起来也很激进，可能会带节奏。"}
+      ]
+    },
+    {
+      "timestamp": "2026-03-27T10:30:45",
+      "phase": "night_action",
+      "event": "night_vote",
+      "description": "狼人投票结果: 目标玩家1 (张三)",
+      "votes": {"4": 1, "5": 1}
+    },
+    {
+      "timestamp": "2026-03-27T10:31:00",
+      "phase": "day_announce",
+      "event": "death_announce",
+      "description": "☀️ 天亮了 - 第 1 天",
+      "death": "昨晚，玩家1 (张三) 惨遭杀害！"
+    },
+    {
+      "timestamp": "2026-03-27T10:31:30",
+      "phase": "day_discussion",
+      "event": "speech",
+      "description": "🗣️ 现在进入发言环节",
+      "speeches": [
+        {
+          "player": 2,
+          "name": "李四",
+          "content": "我是村民，张三昨晚死了，这很遗憾。我注意到昨晚大家都没有什么特别的表现，但我觉得我们应该仔细观察今天的发言。"
+        },
+        {
+          "player": 3,
+          "name": "王五",
+          "content": "我是好人！张三死了，我觉得这很可疑。赵六和钱七，你们两个昨晚是不是有什么行动？"
+        },
+        {
+          "player": 4,
+          "name": "赵六",
+          "content": "我是村民，昨晚我什么都没做。王五你这么激动反而很可疑，为什么要直接指向我和钱七？"
+        },
+        {
+          "player": 5,
+          "name": "钱七",
+          "content": "我也是村民。王五的攻击性确实很强，我觉得他可能是在转移注意力。"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-27T10:32:30",
+      "phase": "day_vote",
+      "event": "voting",
+      "description": "🗳️ 现在开始投票",
+      "votes": [
+        {"voter": 2, "target": 3},
+        {"voter": 3, "target": 4},
+        {"voter": 4, "target": 3},
+        {"voter": 5, "target": 3}
+      ],
+      "result": "玩家3 (王五) 被投票处决！",
+      "role_reveal": "村民"
+    },
+    {
+      "timestamp": "2026-03-27T10:33:00",
+      "phase": "night",
+      "event": "night_discussion",
+      "description": "🌙 第 2 夜 - 天黑请闭眼",
+      "werewolf_discussion": [
+        {"speaker": 4, "content": "李四比较谨慎，不太会带头。我们杀了他吧。"},
+        {"speaker": 5, "content": "好的，同意李四。"}
+      ]
+    },
+    {
+      "timestamp": "2026-03-27T10:33:45",
+      "phase": "day_announce",
+      "event": "death_announce",
+      "description": "☀️ 天亮了 - 第 2 天",
+      "death": "昨晚，玩家2 (李四) 惨遭杀害！"
+    },
+    {
+      "timestamp": "2026-03-27T10:34:00",
+      "phase": "day_discussion",
+      "event": "speech",
+      "description": "🗣️ 现在进入发言环节",
+      "speeches": [
+        {
+          "player": 4,
+          "name": "赵六",
+          "content": "只剩下我们三个了，钱七，你是村民还是狼人？我是村民，我觉得钱七你很可疑，连续两晚死人太巧了。"
+        },
+        {
+          "player": 5,
+          "name": "钱七",
+          "content": "我是村民！赵六你这么急着指控我，是不是心虚？我觉得你才是狼人！"
+        }
+      ]
+    },
+    {
+      "timestamp": "2026-03-27T10:34:30",
+      "phase": "day_vote",
+      "event": "voting",
+      "description": "🗳️ 现在开始投票",
+      "votes": [
+        {"voter": 4, "target": 5},
+        {"voter": 5, "target": 4}
+      ],
+      "result": "平票，重新投票",
+      "revote": [
+        {"voter": 4, "target": 5},
+        {"voter": 5, "target": 4}
+      ],
+      "final_result": "随机选择玩家5 (钱七) 被处决！",
+      "role_reveal": "狼人"
+    },
+    {
+      "timestamp": "2026-03-27T10:35:00",
+      "phase": "game_over",
+      "event": "win_announce",
+      "description": "🏆 游戏结束！村民获胜！",
+      "winner": "villager",
+      "total_rounds": 2
+    }
+  ],
+  "statistics": {
+    "duration_seconds": 300,
+    "total_tokens": 45000,
+    "total_llm_calls": 35,
+    "estimated_cost_yuan": 0.015
+  }
+}

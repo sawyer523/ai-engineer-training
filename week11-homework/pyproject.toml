@@ -1,10 +1,18 @@
 [project]
 name = "week11-homework"
 version = "0.1.0"
-description = "Add your description here"
+description = "Werewolf game system using LangChain + LangGraph with DeepSeek"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-	"python-dotenv",
-	# add your dependencies here and run `uv sync` to install them
+    "python-dotenv",
+    "langchain>=0.1.0",
+    "langchain-openai>=0.1.0",
+    "langgraph>=0.2.0",
+    "langchain-community>=0.1.0",
+    "faiss-cpu>=1.7.0",
+    "numpy>=1.24.0",
+    "pydantic>=2.0.0",
+    "rich>=13.0.0",
+    "colorama>=0.4.6",
 ]
